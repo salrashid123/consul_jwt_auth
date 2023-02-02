@@ -1,0 +1,17 @@
+{
+  "service": {
+    "name": "app",
+    "id": "app-1",
+    "port": 8081,
+    "token": "ec388620-fa58-2c90-2a6c-10ff31d40cc3",
+    "check": {
+      "http": "http://localhost:8081/healthz",
+      "method": "GET",
+      "interval": "1s",
+      "timeout": "1s"
+    }
+  }
+}
+
+
+  

@@ -1,0 +1,77 @@
+{
+  "aud": "$AUD",
+  "exp": $EXP,
+  "iat": $IAT,
+  "iss": "$ISS",
+  "nbf": $IAT,
+  "sub": "$SUB",
+  "tee": {
+    "version": {
+      "major": 0,
+      "minor": 1
+    },
+    "platform": {
+      "hardware_technology": "AMD_SEV"
+    },
+    "container": {
+      "image_reference": "us-central1-docker.pkg.dev/mineral-minutia-820/repo1/myimage@sha256:c693f5cf4f447b31e8c0ae7f784fc754f783f2e64f8836913c22264004204f6b",
+      "image_digest": "sha256:c693f5cf4f447b31e8c0ae7f784fc754f783f2e64f8836913c22264004204f6b",
+      "restart_policy": "Never",
+      "image_id": "sha256:3eee5e759e56f75f4a6fe0538a74aa1cb2dd17e5e1887c0ede63c426ad72ad37",
+      "env_override": null,
+      "cmd_override": null,
+      "env": {
+        "HOSTNAME": "vm1",
+        "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "SSL_CERT_FILE": "/etc/ssl/certs/ca-certificates.crt"
+      },
+      "args": [
+        "/server"
+      ]
+    },
+    "gce": {
+      "zone": "us-central1-a",
+      "project_id": "vegas-codelab-5",
+      "project_number": "75457521745",
+      "instance_name": "vm1",
+      "instance_id": "3507932791508176595"
+    },
+    "emails": [
+      "$EMAIL"
+    ]
+  },
+  "secboot": true,
+  "oemid": 11129,
+  "hwmodel": "GCP_AMD_SEV",
+  "swname": "CONFIDENTIAL_SPACE",
+  "swversion": "1",
+  "dbgstat": "disabled-since-boot",
+  "google_service_accounts": [
+    "$EMAIL"
+  ],
+  "submods": {
+    "container": {
+      "image_reference": "us-central1-docker.pkg.dev/mineral-minutia-820/repo1/myimage@sha256:c693f5cf4f447b31e8c0ae7f784fc754f783f2e64f8836913c22264004204f6b",
+      "image_digest": "sha256:c693f5cf4f447b31e8c0ae7f784fc754f783f2e64f8836913c22264004204f6b",
+      "restart_policy": "Never",
+      "image_id": "sha256:3eee5e759e56f75f4a6fe0538a74aa1cb2dd17e5e1887c0ede63c426ad72ad37",
+      "env_override": null,
+      "cmd_override": null,
+      "env": {
+        "HOSTNAME": "vm1",
+        "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "SSL_CERT_FILE": "/etc/ssl/certs/ca-certificates.crt"
+      },
+      "args": [
+        "/server"
+      ]
+    },
+    "gce": {
+      "zone": "us-central1-a",
+      "project_id": "vegas-codelab-5",
+      "project_number": "75457521745",
+      "instance_name": "vm1",
+      "instance_id": "3507932791508176595"
+    }
+  }
+}

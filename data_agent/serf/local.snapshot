@@ -1,0 +1,184 @@
+alive: server 10.10.10.1:8301
+event-clock: 1
+alive: laptop 10.10.10.2:8301
+clock: 1
+clock: 2
+not-alive: laptop
+alive: server 10.10.10.1:8301
+event-clock: 2
+alive: laptop 10.10.10.2:8301
+clock: 3
+clock: 4
+not-alive: laptop
+alive: server 10.10.10.1:8301
+event-clock: 3
+alive: laptop 10.10.10.2:8301
+clock: 5
+clock: 6
+not-alive: laptop
+alive: server 10.10.10.1:8301
+event-clock: 4
+alive: laptop 10.10.10.2:8301
+clock: 7
+clock: 8
+not-alive: laptop
+alive: server 10.10.10.1:8301
+event-clock: 5
+alive: laptop 10.10.10.2:8301
+clock: 9
+clock: 10
+not-alive: laptop
+alive: server 10.10.10.1:8301
+event-clock: 6
+alive: laptop 10.10.10.2:8301
+clock: 11
+clock: 12
+not-alive: laptop
+clock: 13
+alive: laptop 10.10.10.2:8301
+clock: 15
+clock: 16
+not-alive: laptop
+alive: server 10.10.10.1:8301
+event-clock: 7
+alive: laptop 10.10.10.2:8301
+clock: 17
+clock: 18
+not-alive: laptop
+alive: laptop 10.10.10.2:8301
+clock: 20
+clock: 21
+not-alive: laptop
+alive: server 10.10.10.1:8301
+event-clock: 8
+alive: laptop 10.10.10.2:8301
+clock: 22
+alive: server 10.10.10.1:8301
+alive: laptop 10.10.10.2:8301
+not-alive: laptop
+event-clock: 9
+clock: 23
+alive: laptop 10.10.10.2:8301
+clock: 24
+clock: 25
+not-alive: laptop
+alive: laptop 10.10.10.2:8301
+clock: 27
+clock: 28
+not-alive: laptop
+alive: server 10.10.10.1:8301
+event-clock: 10
+alive: server 10.10.10.1:8301
+event-clock: 11
+alive: server 10.10.10.1:8301
+event-clock: 12
+alive: server 10.10.10.1:8301
+event-clock: 13
+alive: server 10.10.10.1:8301
+event-clock: 14
+alive: node-1 10.10.10.2:8301
+clock: 29
+clock: 30
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 32
+clock: 33
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 35
+clock: 36
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 38
+clock: 39
+not-alive: node-1
+alive: server 10.10.10.1:8301
+event-clock: 15
+alive: server 10.10.10.1:8301
+event-clock: 16
+alive: node-1 10.10.10.2:8301
+clock: 40
+clock: 41
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 43
+clock: 44
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 46
+clock: 47
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 49
+clock: 50
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 52
+clock: 53
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 55
+clock: 56
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 58
+clock: 59
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 61
+clock: 62
+not-alive: node-1
+clock: 63
+alive: server 10.10.10.1:8301
+event-clock: 17
+alive: node-1 10.10.10.2:8301
+clock: 64
+clock: 65
+not-alive: node-1
+alive: node-1 10.10.10.2:8301
+clock: 67
+clock: 68
+not-alive: node-1
+alive: server 10.10.10.1:8301
+event-clock: 18
+alive: node-1 10.10.10.2:8301
+clock: 69
+clock: 70
+not-alive: node-1
+alive: server 10.10.10.1:8301
+event-clock: 19
+alive: node-1 10.10.10.2:8301
+clock: 71
+clock: 72
+not-alive: node-1
+alive: server 10.10.10.1:8301
+event-clock: 20
+alive: node-1 10.10.10.2:8301
+clock: 73
+clock: 74
+not-alive: node-1
+alive: server 10.10.10.1:8301
+event-clock: 21
+alive: node-1 10.10.10.2:8301
+clock: 75
+clock: 76
+not-alive: node-1
+alive: server 10.10.10.1:8301
+event-clock: 22
+alive: node-1 10.10.10.2:8301
+alive: node-1 10.10.10.2:8301
+alive: node-1 10.10.10.2:8301
+alive: server 10.10.10.1:8301
+clock: 77
+leave
+clock: 78
+alive: node-1 10.10.10.2:8301
+alive: server 10.10.10.1:8301
+clock: 79
+leave
+clock: 80
+alive: node-1 10.10.10.2:8301
+alive: server 10.10.10.1:8301
+clock: 81
+leave
+clock: 82

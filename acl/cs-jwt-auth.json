@@ -1,0 +1,18 @@
+{
+
+        "BoundIssuer": "https://confidentialcomputing.googleapis.com/",
+        "BoundAudiences":  [ "https://sts.googleapis.com" ],
+        "JWKSURL": "https://idp-on-cloud-run-6w42z6vi3q-uc.a.run.app/certs",
+        "JWTSupportedAlgs": [ "RS256" ] ,
+        "ClaimMappings": {
+            "hwmodel": "hwmodel",
+            "swname": "swname",
+            "swversion": "swversion",
+            "/submods/container/image_digest": "image_digest",
+            "/submods/gce/project_id": "project_id"
+        },
+        "ListClaimMappings": {
+            "google_service_accounts": "google_service_accounts"
+        }
+
+}

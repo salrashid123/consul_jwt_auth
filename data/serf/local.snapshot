@@ -1,0 +1,17 @@
+alive: server 10.10.10.1:8301
+event-clock: 1
+alive: node-1 10.10.10.2:8301
+clock: 76
+clock: 77
+alive: server 10.10.10.1:8301
+event-clock: 2
+alive: node-1 10.10.10.2:8301
+clock: 78
+clock: 79
+alive: server 10.10.10.1:8301
+event-clock: 3
+alive: node-1 10.10.10.2:8301
+clock: 80
+clock: 81
+clock: 82
+not-alive: node-1
