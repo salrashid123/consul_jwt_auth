@@ -30,35 +30,33 @@ If you want to do this from start to finish, remove the `data/` and `data_agent/
 
 First you need to download the [Console CLI](https://developer.hashicorp.com/consul/downloads).
 
-I used
-
 ```bash
-$ ./consul --version
-Consul v1.14.3
-Revision bd257019
-Build Date 2022-12-13T17:13:55Z
-Protocol 2 spoken by default, understands 2 to 3 (agent will automatically use protocol >2 when speaking to compatible agents)
-```
-
-
-```bash
-
+# configure two interfaces to simulate two different hosts
 sudo ifconfig lo:0 10.10.10.1 up
 sudo ifconfig lo:1 10.10.10.2 up
 
+# edit /etc/hosts and set
+# 10.10.10.1 server.dc1.consul
+
+
+$ consul version
+    Consul v1.16.1
+    Revision e0ab4d29
+
 # start server
-./consul agent  -config-file config/server.hcl  -bind 10.10.10.1 -bootstrap-expect 1 
+consul agent  -config-file config/server.hcl  -bind 10.10.10.1 -bootstrap-expect 1 
 
 # in new window start backend servie
 cd server/
 go run main.go
 
 # in new window start agent on node-1
-./consul agent   -config-dir=client_config/ -node=node-1 -join "server.dc1.consul" -bind 10.10.10.2   \
+consul agent   -config-dir=client_config/ -node=node-1 -join "server.dc1.consul" -bind 10.10.10.2   \
      -dns-port 18600 -http-port 18500 -https-port 18501 -grpc-tls-port 18503 -disable-keyring-file
 
-# in new window get JWT token
-export URL=https://idp-on-cloud-run-6w42z6vi3q-uc.a.run.app
+# in new window get JWT token using a demo "oidc" server
+### https://github.com/salrashid123/diy_oidc
+export URL=https://idp-on-cloud-run-3kdezruzua-uc.a.run.app
 export IAT=`date -u +%s`
 export EXP=`date -u +%s -d "+3600 seconds"`
 export EMAIL="operator-svc-account@vegas-codelab-5.iam.gserviceaccount.com"
@@ -74,12 +72,12 @@ echo $JWT_TOKEN
 echo -n $JWT_TOKEN > /tmp/jwt_token.txt
 
 # login to consul
-./consul login -method=cs-jwt-auth -type=jwt -token-sink-file=/tmp/consul.token -bearer-token-file /tmp/jwt_token.txt -ca-file=consul-agent-ca.pem
+consul login -method=cs-jwt-auth -type=jwt -token-sink-file=/tmp/consul.token -bearer-token-file /tmp/jwt_token.txt -ca-file=consul-agent-ca.pem
 
 # use token inline
-./consul catalog nodes -service=app -detailed -ca-file consul-agent-ca.pem -token=`cat /tmp/consul.token`
+consul catalog nodes -service=app -detailed -ca-file consul-agent-ca.pem -token=`cat /tmp/consul.token`
 
-./consul watch -type=service -service=app -ca-file consul-agent-ca.pem -token=`cat /tmp/consul.token`
+consul watch -type=service -service=app -ca-file consul-agent-ca.pem -token=`cat /tmp/consul.token`
 ```
 
 ---
@@ -94,15 +92,15 @@ First remove the existing data files and certificates
 rm -rf data/ data_agent/ consul-agent* dc1-*
 ```
 
-In each step, i've echoed the values i got with teh default repo config.  Your values will be different
+In each step, i've echoed the values i got with the default repo config.  Your values will be different
 
 #### Create root encryption key
 
 ```bash
-$ ./consul keygen
-  E7deVao78CvZrzayUvwWdlAy4nqBMxzIudNyMEz9VlA=
+$ consul keygen
+  2rYILsPDvVKYEWJYtUtLADkfE4iEF3mSzfZGKOqxykc=
 
-export CONSUL_KEY=E7deVao78CvZrzayUvwWdlAy4nqBMxzIudNyMEz9VlA=
+export CONSUL_KEY=2rYILsPDvVKYEWJYtUtLADkfE4iEF3mSzfZGKOqxykc=
 ```
 
 #### Configure interface aliases
@@ -112,6 +110,9 @@ Configure some virtual interfaces so that Consul's protocol thinks the agnet and
 ```bash
 sudo ifconfig lo:0 10.10.10.1 up
 sudo ifconfig lo:1 10.10.10.2 up
+
+# /etc/hosts
+# 10.10.10.1 server.dc1.consul
 ```
 
 #### Configure Server
@@ -134,7 +135,9 @@ acl = {
 auto_encrypt {
   allow_tls = true
 },
-ui = true,
+ui_config  {
+  enabled = true,
+},
 tls {
   defaults {
     ca_file = "consul-agent-ca.pem",
@@ -150,17 +153,17 @@ tls {
 
 Remember to have removed the previous files
 
-```
-$ ./consul tls ca create
-$ ./consul tls cert create -server -dc dc1
+```bash
+$ consul tls ca create
+$ consul tls cert create -server -dc dc1
 ```
 
 #### Run Consul server 
 
 bind it to `10.10.10.1`
 
-```
-$ ./consul agent  -config-file config/server.hcl  -bind 10.10.10.1 -bootstrap-expect 1 
+```bash
+$ consul agent  -config-file config/server.hcl  -bind 10.10.10.1 -bootstrap-expect 1 
 ```
 
 
@@ -168,188 +171,184 @@ $ ./consul agent  -config-file config/server.hcl  -bind 10.10.10.1 -bootstrap-ex
 
 Get the root `CONSUL_HTTP_TOKEN` which is the `SecretID`
 
-```
-$ ./consul acl bootstrap
+```bash
+$ consul acl bootstrap
 
-    AccessorID:       da55ef86-5ec3-c8ca-9221-aa6a06846957
-    SecretID:         bc97f983-161a-80c4-b98f-a663736a21ed
-    Description:      Bootstrap Token (Global Management)
-    Local:            false
-    Create Time:      2023-02-02 02:48:44.025957485 -0500 EST
-    Policies:
-      00000000-0000-0000-0000-000000000001 - global-management
+AccessorID:       910bc44e-2540-ac7a-67d2-3fc7ed8bc372
+SecretID:         1357ba25-514e-a6ce-c501-b587adb1f756
+Description:      Bootstrap Token (Global Management)
+Local:            false
+Create Time:      2023-09-14 20:30:19.658947948 -0400 EDT
+Policies:
+   00000000-0000-0000-0000-000000000001 - global-management
 ```
 
 export the token
 
 ```bash
-export CONSUL_HTTP_TOKEN=bc97f983-161a-80c4-b98f-a663736a21ed
+export CONSUL_HTTP_TOKEN=1357ba25-514e-a6ce-c501-b587adb1f756
 
-test configuration
-$ ./consul info
+# test configuration
+$ consul info
 ```
 
 You can use this token to Access local/dev UI at  [http://localhost:8500/ui/dc1/overview/server-status](http://localhost:8500/ui/dc1/overview/server-status)
 
 #### Create Node-1 token
 
-```
-$ ./consul acl token create -description "node-1 agent token"  -node-identity "node-1:dc1"
+```bash
+$ consul acl token create -description "node-1 agent token"  -node-identity "node-1:dc1"
 
-    AccessorID:       14bde2d3-2321-3717-cac3-1e6048ef3a89
-    SecretID:         018bb862-2dca-9a42-0ae4-d967158a8e4f
-    Description:      node-1 agent token
-    Local:            false
-    Create Time:      2023-02-02 02:49:25.606181559 -0500 EST
-    Node Identities:
-      node-1 (Datacenter: dc1)
+AccessorID:       6a17e801-e4a3-182d-f1f3-6ee55c7e14e6
+SecretID:         bd0a1f02-6777-64d0-ed2e-c565804dd6b6
+Description:      node-1 agent token
+Local:            false
+Create Time:      2023-09-14 20:31:46.225387691 -0400 EDT
+Node Identities:
+   node-1 (Datacenter: dc1)
 ```
 
 export the token
 
 ```bash
-export NODE_1_TOKEN=018bb862-2dca-9a42-0ae4-d967158a8e4f
+export NODE_1_TOKEN=bd0a1f02-6777-64d0-ed2e-c565804dd6b6
 ```
 
 
 #### Create node policy
 
 ```bash
-$ ./consul acl policy create -name node-1-policy -rules @acl/node-1-policy.hcl
+$ consul acl policy create -name node-1-policy -rules @acl/node-1-policy.hcl
 
-    ID:           be324658-6b6f-5e8c-44bb-ee5fb54bf9ae
-    Name:         node-1-policy
-    Description:  
-    Datacenters:  
-    Rules:
-    node "node-1"{
-      policy = "write"
-    }
+ID:           e1f6ef61-492a-6218-4f33-7645d12a67ae
+Name:         node-1-policy
+Description:  
+Datacenters:  
+Rules:
+node "node-1"{
+  policy = "write"
+}
 
 
-    key "_rexec" {
-      policy = "write"
-    }
+key "_rexec" {
+  policy = "write"
+}
 ```
 
 #### Create app policy
 
 ```bash
-$ ./consul acl policy create -name app-policy -rules @acl/app-policy.hcl
+$ consul acl policy create -name app-policy -rules @acl/app-policy.hcl
 
-    ID:           c4d0fc69-f298-10ff-069d-11d1ffbe28ec
-    Name:         app-policy
-    Description:  
-    Datacenters:  
-    Rules:
-    service "app" {
-      policy = "write"
-      policy = "read"
-    }
+ID:           19040739-cbf8-8ffe-b8f4-e66d646ffc49
+Name:         app-policy
+Description:  
+Datacenters:  
+Rules:
+service "app" {
+  policy = "write"
+  policy = "read"
+}
 ```
 
 #### Create token for app
 
-```
-$ ./consul acl token create -description "Token for app" -service-identity "app"
+```bash
+$ consul acl token create -description "Token for app" -service-identity "app"
 
-    AccessorID:       47a56a74-9e2f-5170-c7d4-1c6b6d436f47
-    SecretID:         ec388620-fa58-2c90-2a6c-10ff31d40cc3
-    Description:      Token for app
-    Local:            false
-    Create Time:      2023-02-02 02:52:17.304826715 -0500 EST
-    Service Identities:
-      app (Datacenters: all)
-
+AccessorID:       b749d61b-a98b-8801-8ee9-f66f5adb53aa
+SecretID:         4c263d18-5665-f8c4-7175-6ef39950bf84
+Description:      Token for app
+Local:            false
+Create Time:      2023-09-14 20:32:52.786666093 -0400 EDT
+Service Identities:
+   app (Datacenters: all)
 ```
 
 export the token
 
 ```bash
-export APP_TOKEN=ec388620-fa58-2c90-2a6c-10ff31d40cc3
+export APP_TOKEN=4c263d18-5665-f8c4-7175-6ef39950bf84
 ```
 
 #### Create node reader policy
 
-```
-$ ./consul acl policy create -name node-reader -rules @acl/node-reader.hcl
+```bash
+$ consul acl policy create -name node-reader -rules @acl/node-reader.hcl
 
-    ID:           74a2903e-0bef-025d-5966-3e7c5e590451
-    Name:         node-reader
-    Description:  
-    Datacenters:  
-    Rules:
-    service "app" {
-      policy = "read"
-    }
+ID:           fd403c55-2bca-3522-d4de-f31e34026ecd
+Name:         node-reader
+Description:  
+Datacenters:  
+Rules:
+service "app" {
+  policy = "read"
+}
 
-    node_prefix "" {
-      policy = "read"
-    }
-
+node_prefix "" {
+  policy = "read"
+}
 ```
 
 #### Roles
 
 Create roles
 
+```bash
+$ consul acl role create -name "node-reader-role" -description "node-reader role" -policy-name "node-reader"
+
+ID:           76b76951-031c-eb83-3287-a6e09448b960
+Name:         node-reader-role
+Description:  node-reader role
+Policies:
+   fd403c55-2bca-3522-d4de-f31e34026ecd - node-reader
 ```
-$ ./consul acl role create -name "node-reader-role" -description "node-reader role" -policy-name "node-reader"
 
-  ID:           6e58df7b-7af2-bc00-a26b-b51f23ab2314
-  Name:         node-reader-role
-  Description:  node-reader role
-  Policies:
-    74a2903e-0bef-025d-5966-3e7c5e590451 - node-reader
+```bash
+$ consul acl role create -name "node-role" -description "node role" -policy-name "node-1-policy"
 
-```
-
-```
-$ ./consul acl role create -name "node-role" -description "node role" -policy-name "node-1-policy"
-
-    ID:           c76f5de9-c0fe-1dba-544e-a3574914990a
-    Name:         node-role
-    Description:  node role
-    Policies:
-      be324658-6b6f-5e8c-44bb-ee5fb54bf9ae - node-1-policy
-
+ID:           6f16b2ca-be00-0f93-e80b-faa5c7441cde
+Name:         node-role
+Description:  node role
+Policies:
+   e1f6ef61-492a-6218-4f33-7645d12a67ae - node-1-policy
 ```
 
 #### Configure Workload federation
 
 We can now configure Consul to validate an OIDC endpoint.
 
-For this we will use a fake OIDC server from [https://github.com/salrashid123/workload_federation_cloudrun_gcf#1--fake-oidc-server](https://github.com/salrashid123/workload_federation_cloudrun_gcf#1--fake-oidc-server) I setup here.
+For this we will use a fake OIDC server from [https://github.com/salrashid123/diy_oidc](https://github.com/salrashid123/diy_oidc) 
 
+Note, the OIDC JWK endpoint is here `https://idp-on-cloud-run-3kdezruzua-uc.a.run.app/.well-known/openid-configuration`
 
-```
-$ ./consul acl auth-method create -name=cs-jwt-auth -type jwt  -description 'conf space jwt' -config=@acl/cs-jwt-auth.json
+```bash
+$ consul acl auth-method create -name=cs-jwt-auth -type jwt  -description 'conf space jwt' -config=@acl/cs-jwt-auth.json
 
-  Name:          cs-jwt-auth
-  Type:          jwt
-  Description:   conf space jwt
-  Config:
-  {
-    "BoundAudiences": [
-      "https://sts.googleapis.com"
-    ],
-    "BoundIssuer": "https://confidentialcomputing.googleapis.com/",
-    "ClaimMappings": {
-      "/submods/container/image_digest": "image_digest",
-      "/submods/gce/project_id": "project_id",
-      "hwmodel": "hwmodel",
-      "swname": "swname",
-      "swversion": "swversion"
-    },
-    "JWKSURL": "https://idp-on-cloud-run-6w42z6vi3q-uc.a.run.app/certs",
-    "JWTSupportedAlgs": [
-      "RS256"
-    ],
-    "ListClaimMappings": {
-      "google_service_accounts": "google_service_accounts"
-    }
+Name:          cs-jwt-auth
+Type:          jwt
+Description:   conf space jwt
+Config:
+{
+  "BoundAudiences": [
+    "https://sts.googleapis.com"
+  ],
+  "BoundIssuer": "https://confidentialcomputing.googleapis.com/",
+  "ClaimMappings": {
+    "/submods/container/image_digest": "image_digest",
+    "/submods/gce/project_id": "project_id",
+    "hwmodel": "hwmodel",
+    "swname": "swname",
+    "swversion": "swversion"
+  },
+  "JWKSURL": "https://idp-on-cloud-run-3kdezruzua-uc.a.run.app/certs",
+  "JWTSupportedAlgs": [
+    "RS256"
+  ],
+  "ListClaimMappings": {
+    "google_service_accounts": "google_service_accounts"
   }
-
+}
 ```
 
 ![images/consul_auth.png](images/consul_auth.png)
@@ -359,16 +358,15 @@ $ ./consul acl auth-method create -name=cs-jwt-auth -type jwt  -description 'con
 Now set more fine grained ACL to use claims within the OIDC JWT for role-binding.
 
 ```bash
-$ ./consul acl binding-rule create -method=cs-jwt-auth -bind-type=role -bind-name=node-reader-role \
+$ consul acl binding-rule create -method=cs-jwt-auth -bind-type=role -bind-name=node-reader-role \
        -selector="value.swname==CONFIDENTIAL_SPACE and value.image_digest==\"sha256:c693f5cf4f447b31e8c0ae7f784fc754f783f2e64f8836913c22264004204f6b\" and value.swversion==1"
 
-    ID:           099a7a8f-599a-bac5-b2de-e360830bf51e
-    AuthMethod:   cs-jwt-auth
-    Description:  
-    BindType:     role
-    BindName:     node-reader-role
-    Selector:     value.swname==CONFIDENTIAL_SPACE and value.image_digest=="sha256:c693f5cf4f447b31e8c0ae7f784fc754f783f2e64f8836913c22264004204f6b" and value.swversion==1
-
+ID:           88a31e06-6470-61d4-f966-2c36219efe16
+AuthMethod:   cs-jwt-auth
+Description:  
+BindType:     role
+BindName:     node-reader-role
+Selector:     value.swname==CONFIDENTIAL_SPACE and value.image_digest=="sha256:c693f5cf4f447b31e8c0ae7f784fc754f783f2e64f8836913c22264004204f6b" and value.swversion==1
 ```
 
 
@@ -384,20 +382,22 @@ go run main.go
 using values set earlier for encryption and node tokens
 
 ```bash
-export CONSUL_KEY=E7deVao78CvZrzayUvwWdlAy4nqBMxzIudNyMEz9VlA=
-export NODE_1_TOKEN=018bb862-2dca-9a42-0ae4-d967158a8e4f
+export CONSUL_KEY=2rYILsPDvVKYEWJYtUtLADkfE4iEF3mSzfZGKOqxykc=
+export NODE_1_TOKEN=bd0a1f02-6777-64d0-ed2e-c565804dd6b6
 ```
 
 edit `config/agent.hcl` and set the values in the file
 
-```
+```hcl
 data_dir = "/tmp/data"
 log_level = "INFO"
 node_name = "node-1"
 server = false,
 encrypt = "$CONSUL_KEY",
 
-ui = false,
+ui_config  {
+  enabled = false,
+},
 auto_encrypt {
   tls = true
 },
@@ -419,12 +419,12 @@ acl {
 Again using value for app token from earlier
 
 ```bash
-export APP_TOKEN=ec388620-fa58-2c90-2a6c-10ff31d40cc3
+export APP_TOKEN=4c263d18-5665-f8c4-7175-6ef39950bf84
 ```
 
 edit `config/client_config.json`
 
-```
+```json
 {
   "service": {
     "name": "app",
@@ -439,13 +439,12 @@ edit `config/client_config.json`
     }
   }
 }
-
 ```
 
 #### Start node-1 agent
 
-```
-$ ./consul agent   -config-dir=client_config/ -node=node-1 -join "server.dc1.consul" -bind 10.10.10.2   \
+```bash
+$ consul agent   -config-dir=client_config/ -node=node-1 -retry-join "server.dc1.consul" -bind 10.10.10.2   \
      -dns-port 18600 -http-port 18500 -https-port 18501 -grpc-tls-port 18503 -disable-keyring-file
 ```
 
@@ -457,7 +456,7 @@ In a **NEW** window, acquire JWT access token and use that to register to consul
 
 
 ```bash
-export URL=https://idp-on-cloud-run-6w42z6vi3q-uc.a.run.app
+export URL=https://idp-on-cloud-run-3kdezruzua-uc.a.run.app
 export IAT=`date -u +%s`
 export EXP=`date -u +%s -d "+3600 seconds"`
 
@@ -479,20 +478,20 @@ THe OIDC token returned is in the form:
 ```json
 {
   "alg": "RS256",
-  "kid": "123456",
+  "kid": "rsaKeyID_1",
   "typ": "JWT"
 }.
 {
   "aud": "https://sts.googleapis.com",
   "dbgstat": "disabled-since-boot",
-  "exp": 1675332164,
+  "exp": 1694742242,
   "google_service_accounts": [
     "operator-svc-account@vegas-codelab-5.iam.gserviceaccount.com"
   ],
   "hwmodel": "GCP_AMD_SEV",
-  "iat": 1675328564,
+  "iat": 1694738642,
   "iss": "https://confidentialcomputing.googleapis.com/",
-  "nbf": 1675328564,
+  "nbf": 1694738642,
   "oemid": 11129,
   "secboot": true,
   "sub": "https://www.googleapis.com/compute/v1/projects/vegas-codelab-5/zones/us-central1-a/instances/vm1",
@@ -568,7 +567,7 @@ Using the OIDC token specified in the `bearer-token-file` parameter.
 Write the consul token to `/tmp/consul.token`
 
 ```bash
-$ ./consul login -method=cs-jwt-auth -type=jwt -token-sink-file=/tmp/consul.token -bearer-token-file /tmp/jwt_token.txt -ca-file=consul-agent-ca.pem
+$ consul login -method=cs-jwt-auth -type=jwt -token-sink-file=/tmp/consul.token -bearer-token-file /tmp/jwt_token.txt -ca-file=consul-agent-ca.pem
 
 
 # ofcourse your token will be different
@@ -581,13 +580,13 @@ cat /tmp/consul.token
 Use token to access consul server
 
 ```bash
-./consul catalog nodes -service=app -detailed -ca-file consul-agent-ca.pem -token=`cat /tmp/consul.token`
+
+$ consul catalog nodes -service=app -detailed -ca-file consul-agent-ca.pem -token=`cat /tmp/consul.token`
 
 Node    ID                                    Address     DC   TaggedAddresses                                                           Meta
-node-1  9882a9b4-87b4-2957-439c-43cbf8814854  10.10.10.2  dc1  lan=10.10.10.2, lan_ipv4=10.10.10.2, wan=10.10.10.2, wan_ipv4=10.10.10.2  consul-network-segment=
+node-1  ad054c0e-8a7e-60fa-4ddb-0b0dacde8015  10.10.10.2  dc1  lan=10.10.10.2, lan_ipv4=10.10.10.2, wan=10.10.10.2, wan_ipv4=10.10.10.2  consul-network-segment=, consul-version=1.16.1
 ```
 
-
-```json
-./consul watch -type=service -service=app -ca-file consul-agent-ca.pem -token=`cat /tmp/consul.token`
+```bash
+consul watch -type=service -service=app -ca-file consul-agent-ca.pem -token=`cat /tmp/consul.token`
 ```

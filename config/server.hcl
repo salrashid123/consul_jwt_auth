@@ -2,7 +2,7 @@ data_dir = "data/"
 log_level = "INFO"
 node_name = "server"
 server = true,
-encrypt = "E7deVao78CvZrzayUvwWdlAy4nqBMxzIudNyMEz9VlA=",
+encrypt = "2rYILsPDvVKYEWJYtUtLADkfE4iEF3mSzfZGKOqxykc=",
 encrypt_verify_incoming = true,
 encrypt_verify_outgoing = true,
 acl = {
@@ -13,7 +13,9 @@ acl = {
 auto_encrypt {
   allow_tls = true
 },
-ui = true,
+ui_config  {
+  enabled = true,
+},
 tls {
   defaults {
     ca_file = "consul-agent-ca.pem",

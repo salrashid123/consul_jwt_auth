@@ -2,9 +2,12 @@ data_dir = "data_agent/"
 log_level = "INFO"
 node_name = "node-1"
 server = false,
-encrypt = "E7deVao78CvZrzayUvwWdlAy4nqBMxzIudNyMEz9VlA=",
+encrypt = "2rYILsPDvVKYEWJYtUtLADkfE4iEF3mSzfZGKOqxykc=",
 
-ui = false,
+ui_config  {
+  enabled = false,
+},
+
 auto_encrypt {
   tls = true
 },
@@ -17,7 +20,7 @@ tls {
 }
 acl {
   tokens {
-    agent  = "018bb862-2dca-9a42-0ae4-d967158a8e4f"
+    agent  = "bd0a1f02-6777-64d0-ed2e-c565804dd6b6"
   }
 }
 

@@ -2,7 +2,7 @@
 
         "BoundIssuer": "https://confidentialcomputing.googleapis.com/",
         "BoundAudiences":  [ "https://sts.googleapis.com" ],
-        "JWKSURL": "https://idp-on-cloud-run-6w42z6vi3q-uc.a.run.app/certs",
+        "JWKSURL": "https://idp-on-cloud-run-3kdezruzua-uc.a.run.app/certs",
         "JWTSupportedAlgs": [ "RS256" ] ,
         "ClaimMappings": {
             "hwmodel": "hwmodel",

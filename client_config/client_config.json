@@ -3,7 +3,7 @@
     "name": "app",
     "id": "app-1",
     "port": 8081,
-    "token": "ec388620-fa58-2c90-2a6c-10ff31d40cc3",
+    "token": "4c263d18-5665-f8c4-7175-6ef39950bf84",
     "check": {
       "http": "http://localhost:8081/healthz",
       "method": "GET",
