@@ -314,6 +314,13 @@ Policies:
    e1f6ef61-492a-6218-4f33-7645d12a67ae - node-1-policy
 ```
 
+#### Allow anon reader to see services
+
+```bash
+consul acl policy create -name anonymous-dns-read -rules @acl/anonymous-dns-read.hcl
+consul acl token update -id anonymous -policy-name=anonymous-dns-read
+```
+
 #### Configure Workload federation
 
 We can now configure Consul to validate an OIDC endpoint.
@@ -589,4 +596,18 @@ node-1  ad054c0e-8a7e-60fa-4ddb-0b0dacde8015  10.10.10.2  dc1  lan=10.10.10.2, l
 
 ```bash
 consul watch -type=service -service=app -ca-file consul-agent-ca.pem -token=`cat /tmp/consul.token`
+```
+
+#### Using dns resolver
+
+```bash
+$ dig @127.0.0.1 -p 8600 app.service.consul SRV
+
+;; ANSWER SECTION:
+app.service.consul.	0	IN	SRV	1 1 18081 node-1.node.dc1.consul.
+
+;; ADDITIONAL SECTION:
+node-1.node.dc1.consul.	0	IN	A	10.10.10.2
+node-1.node.dc1.consul.	0	IN	TXT	"consul-version=1.16.1"
+node-1.node.dc1.consul.	0	IN	TXT	"consul-network-segment="
 ```
